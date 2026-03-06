@@ -45,30 +45,26 @@ public class MenuArchivo extends JMenuBar{
         eventos();
     }
     
-    private void eventos(){
+    private void eventos() {
     nuevo.addActionListener(e -> areaTexto.setText(""));
+    
     abrir.addActionListener(e -> {
+        JFileChooser chooser = new JFileChooser();
+        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+            File archivo = chooser.getSelectedFile();
+            gestor.abrirDocx(archivo, areaTexto); 
+        }
+    });
 
-            JFileChooser chooser = new JFileChooser();
-
-            if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                File archivo = chooser.getSelectedFile();
-                gestor.abrirDocx(archivo.getAbsolutePath(), areaTexto);
-            }
-
-        });
     guardar.addActionListener(e -> {
+        JFileChooser chooser = new JFileChooser();
+        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+            File archivo = chooser.getSelectedFile();
+            // CAMBIO: Pasa 'archivo' directamente
+            gestor.guardarDocx(archivo, areaTexto);
+        }
+    });
 
-            JFileChooser chooser = new JFileChooser();
-
-            if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-                File archivo = chooser.getSelectedFile();
-                gestor.guardarDocx(archivo.getAbsolutePath(), areaTexto);
-            }
-
-        });
-
-        salir.addActionListener(e -> System.exit(0));
-
+    salir.addActionListener(e -> System.exit(0));
     }
 }
