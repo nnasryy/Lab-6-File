@@ -78,11 +78,16 @@ public class EditorFrame extends JFrame {
         JMenu mArchivo = new JMenu("Archivo");
         mArchivo.setMnemonic(KeyEvent.VK_A);
 
-        JMenuItem iNuevo   = item("Nuevo",           KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
-        JMenuItem iAbrir   = item("Abrir...",         KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
-        JMenuItem iGuardar = item("Guardar",          KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
-        JMenuItem iGuarCom = item("Guardar como...",  KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
-        JMenuItem iSalir   = item("Salir",            KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_DOWN_MASK));
+        JMenuItem iNuevo   = item("Nuevo",   
+                KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
+        JMenuItem iAbrir   = item("Abrir...",      
+                KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
+        JMenuItem iGuardar = item("Guardar",      
+                KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
+        JMenuItem iGuarCom = item("Guardar como...", 
+                KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
+        JMenuItem iSalir   = item("Salir",        
+                KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_DOWN_MASK));
 
         iNuevo  .addActionListener(e -> menuArchivo.accionNuevo());
         iAbrir  .addActionListener(e -> menuArchivo.accionAbrir());
@@ -95,10 +100,14 @@ public class EditorFrame extends JFrame {
         mArchivo.add(iSalir);
 
         JMenu mEditar = new JMenu("Editar");
-        JMenuItem iCortar  = item("Cortar",      KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK));
-        JMenuItem iCopiar  = item("Copiar",      KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
-        JMenuItem iPegar   = item("Pegar",       KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
-        JMenuItem iSelTodo = item("Selec. todo", KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK));
+        JMenuItem iCortar  = item("Cortar",     
+                KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK));
+        JMenuItem iCopiar  = item("Copiar",     
+                KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
+        JMenuItem iPegar   = item("Pegar",       
+                KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
+        JMenuItem iSelTodo = item("Selec. todo", 
+                KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK));
 
         iCortar .addActionListener(e -> textPane.cut());
         iCopiar .addActionListener(e -> textPane.copy());
@@ -114,9 +123,12 @@ public class EditorFrame extends JFrame {
         mInsertar.add(iTabla);
 
         JMenu mFormato = new JMenu("Formato");
-        JMenuItem iNegrita   = item("Negrita",   KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK));
-        JMenuItem iCursiva   = item("Cursiva",   KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_DOWN_MASK));
-        JMenuItem iSubrayado = item("Subrayado", KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_DOWN_MASK));
+        JMenuItem iNegrita   = item("Negrita",  
+                KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK));
+        JMenuItem iCursiva   = item("Cursiva",  
+                KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_DOWN_MASK));
+        JMenuItem iSubrayado = item("Subrayado",
+                KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_DOWN_MASK));
 
         iNegrita  .addActionListener(e -> barraHerramientas.toggleNegrita());
         iCursiva  .addActionListener(e -> barraHerramientas.toggleCursiva());
