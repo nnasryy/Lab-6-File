@@ -7,7 +7,8 @@ import java.awt.*;
 public class BarraHerramientas extends JToolBar {
 
     private final EditorFrame frame;
-    private final FormatoTexto formato;
+    private FormatoTexto formato;
+    private JTextPane lastFocusedPane;
 
     private JComboBox<String> comboFuente;
     private JComboBox<String> comboTamano;
@@ -36,13 +37,23 @@ public class BarraHerramientas extends JToolBar {
 
     public BarraHerramientas(EditorFrame frame) {
         super(JToolBar.HORIZONTAL);
-        this.frame   = frame;
-        this.formato = new FormatoTexto(frame.getTextPane());
+        this.frame          = frame;
+        this.lastFocusedPane = frame.getTextPane();
+        this.formato        = new FormatoTexto(frame.getTextPane());
         setFloatable(false);
         setRollover(true);
         setBackground(new Color(245, 247, 250));
         setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(180, 180, 180)));
         construir();
+    }
+
+    public void setTargetPane(JTextPane pane) {
+        this.lastFocusedPane = pane;
+        this.formato = new FormatoTexto(pane);
+    }
+
+    private FormatoTexto getFormato() {
+        return new FormatoTexto(lastFocusedPane);
     }
 
     private void construir() {
@@ -66,7 +77,7 @@ public class BarraHerramientas extends JToolBar {
                 if (fuente != null) {
                     SimpleAttributeSet a = new SimpleAttributeSet();
                     StyleConstants.setFontFamily(a, fuente);
-                    formato.aplicarCaracter(a);
+                    getFormato().aplicarCaracter(a);
                 }
             }
         });
@@ -87,7 +98,7 @@ public class BarraHerramientas extends JToolBar {
                     if (tam > 0 && tam <= 500) {
                         SimpleAttributeSet a = new SimpleAttributeSet();
                         StyleConstants.setFontSize(a, tam);
-                        formato.aplicarCaracter(a);
+                        getFormato().aplicarCaracter(a);
                     }
                 } catch (NumberFormatException ignored) {}
             }
@@ -109,7 +120,7 @@ public class BarraHerramientas extends JToolBar {
                 btnColor.setForeground(c);
                 SimpleAttributeSet a = new SimpleAttributeSet();
                 StyleConstants.setForeground(a, c);
-                formato.aplicarCaracter(a);
+                getFormato().aplicarCaracter(a);
             }
         });
         add(btnColor);
@@ -121,7 +132,7 @@ public class BarraHerramientas extends JToolBar {
             if (!sincronizando) {
                 SimpleAttributeSet a = new SimpleAttributeSet();
                 StyleConstants.setBold(a, btnNegrita.isSelected());
-                formato.aplicarCaracter(a);
+                getFormato().aplicarCaracter(a);
             }
         });
         add(btnNegrita);
@@ -131,7 +142,7 @@ public class BarraHerramientas extends JToolBar {
             if (!sincronizando) {
                 SimpleAttributeSet a = new SimpleAttributeSet();
                 StyleConstants.setItalic(a, btnCursiva.isSelected());
-                formato.aplicarCaracter(a);
+                getFormato().aplicarCaracter(a);
             }
         });
         add(btnCursiva);
@@ -141,7 +152,7 @@ public class BarraHerramientas extends JToolBar {
             if (!sincronizando) {
                 SimpleAttributeSet a = new SimpleAttributeSet();
                 StyleConstants.setUnderline(a, btnSubrayado.isSelected());
-                formato.aplicarCaracter(a);
+                getFormato().aplicarCaracter(a);
             }
         });
         add(btnSubrayado);
@@ -153,10 +164,10 @@ public class BarraHerramientas extends JToolBar {
         btnAlignRight   = boton("Der",  "Alinear derecha");
         btnAlignJustify = boton("Just", "Justificar");
 
-        btnAlignLeft   .addActionListener(e -> formato.aplicarAlineacion(StyleConstants.ALIGN_LEFT));
-        btnAlignCenter .addActionListener(e -> formato.aplicarAlineacion(StyleConstants.ALIGN_CENTER));
-        btnAlignRight  .addActionListener(e -> formato.aplicarAlineacion(StyleConstants.ALIGN_RIGHT));
-        btnAlignJustify.addActionListener(e -> formato.aplicarAlineacion(StyleConstants.ALIGN_JUSTIFIED));
+        btnAlignLeft   .addActionListener(e -> getFormato().aplicarAlineacion(StyleConstants.ALIGN_LEFT));
+        btnAlignCenter .addActionListener(e -> getFormato().aplicarAlineacion(StyleConstants.ALIGN_CENTER));
+        btnAlignRight  .addActionListener(e -> getFormato().aplicarAlineacion(StyleConstants.ALIGN_RIGHT));
+        btnAlignJustify.addActionListener(e -> getFormato().aplicarAlineacion(StyleConstants.ALIGN_JUSTIFIED));
 
         add(btnAlignLeft);
         add(btnAlignCenter);
@@ -195,21 +206,21 @@ public class BarraHerramientas extends JToolBar {
         btnNegrita.setSelected(!btnNegrita.isSelected());
         SimpleAttributeSet a = new SimpleAttributeSet();
         StyleConstants.setBold(a, btnNegrita.isSelected());
-        formato.aplicarCaracter(a);
+        getFormato().aplicarCaracter(a);
     }
 
     public void toggleCursiva() {
         btnCursiva.setSelected(!btnCursiva.isSelected());
         SimpleAttributeSet a = new SimpleAttributeSet();
         StyleConstants.setItalic(a, btnCursiva.isSelected());
-        formato.aplicarCaracter(a);
+        getFormato().aplicarCaracter(a);
     }
 
     public void toggleSubrayado() {
         btnSubrayado.setSelected(!btnSubrayado.isSelected());
         SimpleAttributeSet a = new SimpleAttributeSet();
         StyleConstants.setUnderline(a, btnSubrayado.isSelected());
-        formato.aplicarCaracter(a);
+        getFormato().aplicarCaracter(a);
     }
 
     private JToggleButton toggle(String texto, String tooltip) {

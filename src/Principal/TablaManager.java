@@ -1,17 +1,15 @@
 package Principal;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.text.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TablaManager {
 
     private final EditorFrame frame;
-    private DefaultTableModel modelo;
 
     public TablaManager(EditorFrame frame) {
         this.frame = frame;
@@ -41,70 +39,47 @@ public class TablaManager {
             return;
         }
 
-        modelo = new DefaultTableModel(filas, cols) {
-            @Override
-            public boolean isCellEditable(int row, int col) { return true; }
-        };
-
-        insertarTablaEditable(filas, cols);
+        insertarTabla(filas, cols);
         frame.setEstado("Tabla " + filas + "x" + cols + " insertada.");
     }
 
-    private void insertarTablaEditable(int numFilas, int numCols) {
+    private void insertarTabla(int numFilas, int numCols) {
         StyledDocument doc = frame.getStyledDocument();
         int pos = frame.getTextPane().getCaretPosition();
 
-        JTable tabla = new JTable(modelo) {
-            @Override
-            public boolean isCellEditable(int row, int col) { return true; }
-        };
+        int anchoCol   = 130;
+        int altoFila   = 32;
+        int bordeGap   = 1;
+        int totalAncho = anchoCol * numCols + bordeGap * (numCols + 1);
+        int editorW    = frame.getTextPane().getWidth() - 80;
+        if (editorW > 100 && totalAncho > editorW) totalAncho = editorW;
+        int totalAlto  = altoFila * numFilas + bordeGap * (numFilas + 1);
 
-        tabla.setTableHeader(null);
-        tabla.setRowHeight(28);
-        tabla.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        tabla.setGridColor(new Color(180, 195, 215));
-        tabla.setSelectionBackground(new Color(180, 210, 240));
-        tabla.setSelectionForeground(Color.BLACK);
-        tabla.setIntercellSpacing(new Dimension(1, 1));
-        tabla.setShowGrid(true);
+        JPanel tablaPanel = new JPanel(null);
+        tablaPanel.setBackground(new Color(140, 160, 190));
+        tablaPanel.setPreferredSize(new Dimension(totalAncho, totalAlto));
+        tablaPanel.setMaximumSize(new Dimension(totalAncho, totalAlto));
+        tablaPanel.setMinimumSize(new Dimension(totalAncho, totalAlto));
 
-        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable t, Object value,
-                    boolean isSelected, boolean hasFocus, int row, int col) {
-                super.getTableCellRendererComponent(t, value, isSelected, hasFocus, row, col);
-                if (!isSelected) {
-                    setBackground(row % 2 == 0 ? Color.WHITE : new Color(235, 242, 252));
-                    setForeground(Color.BLACK);
-                }
-                setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, new Color(180, 195, 215)));
-                return this;
+        int realColW = (totalAncho - bordeGap * (numCols + 1)) / numCols;
+        int realRowH = (totalAlto  - bordeGap * (numFilas + 1)) / numFilas;
+
+        for (int r = 0; r < numFilas; r++) {
+            for (int c = 0; c < numCols; c++) {
+                int x = bordeGap + c * (realColW + bordeGap);
+                int y = bordeGap + r * (realRowH + bordeGap);
+                JTextPane celda = crearCelda(r);
+                celda.setBounds(x, y, realColW, realRowH);
+                tablaPanel.add(celda);
             }
-        };
-        renderer.setHorizontalAlignment(SwingConstants.LEFT);
-
-        for (int i = 0; i < numCols; i++) {
-            tabla.getColumnModel().getColumn(i).setCellRenderer(renderer);
         }
-
-        int anchoCol   = 120;
-        int totalAncho = Math.min(anchoCol * numCols + 2, frame.getTextPane().getWidth() - 60);
-        if (totalAncho < 200) totalAncho = Math.min(anchoCol * numCols + 2, 700);
-        int totalAlto  = (28 + 1) * numFilas + 4;
-
-        JPanel contenedor = new JPanel(new BorderLayout());
-        contenedor.add(tabla, BorderLayout.CENTER);
-        contenedor.setBorder(BorderFactory.createLineBorder(new Color(180, 195, 215), 1));
-        contenedor.setPreferredSize(new Dimension(totalAncho, totalAlto));
-        contenedor.setMaximumSize(new Dimension(totalAncho, totalAlto));
-        contenedor.setMinimumSize(new Dimension(totalAncho, totalAlto));
 
         try {
             doc.insertString(pos, "\n", null);
             pos++;
 
             SimpleAttributeSet aset = new SimpleAttributeSet();
-            StyleConstants.setComponent(aset, contenedor);
+            StyleConstants.setComponent(aset, tablaPanel);
             doc.insertString(pos, " ", aset);
             pos++;
 
@@ -116,17 +91,37 @@ public class TablaManager {
         }
     }
 
-    public List<String[]> getDatosTabla() {
-        List<String[]> data = new ArrayList<>();
-        if (modelo == null) return data;
-        for (int r = 0; r < modelo.getRowCount(); r++) {
-            String[] fila = new String[modelo.getColumnCount()];
-            for (int c = 0; c < modelo.getColumnCount(); c++) {
-                Object val = modelo.getValueAt(r, c);
-                fila[c] = (val == null) ? "" : val.toString();
+    private JTextPane crearCelda(int fila) {
+        JTextPane celda = new JTextPane();
+        celda.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        celda.setBackground(fila % 2 == 0 ? Color.WHITE : new Color(235, 242, 252));
+        celda.setMargin(new Insets(3, 5, 3, 5));
+        celda.setBorder(BorderFactory.createEmptyBorder(3, 5, 3, 5));
+
+        celda.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                frame.getBarraHerram().setTargetPane(celda);
+                int p = celda.getCaretPosition();
+                AttributeSet attr = celda.getStyledDocument()
+                        .getCharacterElement(p > 0 ? p - 1 : p).getAttributes();
+                frame.getBarraHerram().sincronizar(attr);
             }
-            data.add(fila);
-        }
-        return data;
+        });
+
+        celda.addCaretListener(e -> {
+            if (celda.isFocusOwner()) {
+                int p = celda.getCaretPosition();
+                AttributeSet attr = celda.getStyledDocument()
+                        .getCharacterElement(p > 0 ? p - 1 : p).getAttributes();
+                frame.getBarraHerram().sincronizar(attr);
+            }
+        });
+
+        return celda;
+    }
+
+    public List<String[]> getDatosTabla() {
+        return new ArrayList<>();
     }
 }
