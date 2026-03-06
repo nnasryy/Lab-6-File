@@ -107,7 +107,7 @@ public class BarraHerramientas extends JToolBar {
 
         addSeparator(new Dimension(6, 0));
 
-        btnColor = new JButton("A");
+        btnColor = new JButton("Col");
         btnColor.setFont(new Font("Arial", Font.BOLD, 14));
         btnColor.setForeground(colorActual);
         btnColor.setToolTipText("Color de fuente");
