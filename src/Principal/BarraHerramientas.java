@@ -1,6 +1,4 @@
-
 package Principal;
-
 
 import javax.swing.*;
 import javax.swing.text.*;
@@ -30,18 +28,16 @@ public class BarraHerramientas extends JToolBar {
         "Tahoma", "Trebuchet MS", "Palatino Linotype", "Garamond",
         "Book Antiqua", "Comic Sans MS", "Impact", "Lucida Console", "Segoe UI"
     };
-    
 
     private static final String[] TAMANOS = {
         "8","9","10","11","12","14","16","18","20","22",
         "24","28","32","36","40","48","56","64","72","96"
     };
 
-    
     public BarraHerramientas(EditorFrame frame) {
         super(JToolBar.HORIZONTAL);
         this.frame   = frame;
-        this.formato = new FormatoTexto(frame);
+        this.formato = new FormatoTexto(frame.getTextPane());
         setFloatable(false);
         setRollover(true);
         setBackground(new Color(245, 247, 250));

@@ -1,8 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Principal;
+
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
@@ -15,72 +12,67 @@ public class FormatoTexto {
         this.areaTexto = areaTexto;
     }
 
-    // MÉTODO BASE: Ahora es más inteligente para combinar estilos
-    private void aplicarEstilo(SimpleAttributeSet estilo) {
+    public void aplicarCaracter(SimpleAttributeSet estilo) {
         int inicio = areaTexto.getSelectionStart();
-        int fin = areaTexto.getSelectionEnd();
-
-        if (inicio == fin) return; // Pro Tip: No hace nada si no hay selección
-
+        int fin    = areaTexto.getSelectionEnd();
         StyledDocument doc = areaTexto.getStyledDocument();
-        // El 'false' es clave para que NO borre los estilos anteriores
-        doc.setCharacterAttributes(inicio, fin - inicio, estilo, false);
+        if (inicio == fin) {
+            areaTexto.setCharacterAttributes(estilo, false);
+        } else {
+            doc.setCharacterAttributes(inicio, fin - inicio, estilo, false);
+        }
+        areaTexto.requestFocusInWindow();
     }
 
-    // FUENTE Y TAMAÑO
+    public void aplicarAlineacion(int alineacion) {
+        StyledDocument doc = areaTexto.getStyledDocument();
+        int inicio = areaTexto.getSelectionStart();
+        int fin    = areaTexto.getSelectionEnd();
+        SimpleAttributeSet estilo = new SimpleAttributeSet();
+        StyleConstants.setAlignment(estilo, alineacion);
+        if (inicio == fin) {
+            Element elem = doc.getParagraphElement(inicio);
+            doc.setParagraphAttributes(elem.getStartOffset(),
+                elem.getEndOffset() - elem.getStartOffset(), estilo, false);
+        } else {
+            doc.setParagraphAttributes(inicio, fin - inicio, estilo, false);
+        }
+        areaTexto.requestFocusInWindow();
+    }
+
     public void cambiarFuente(String fuente) {
         SimpleAttributeSet estilo = new SimpleAttributeSet();
         StyleConstants.setFontFamily(estilo, fuente);
-        aplicarEstilo(estilo);
+        aplicarCaracter(estilo);
     }
 
     public void cambiarTamano(int tamano) {
         SimpleAttributeSet estilo = new SimpleAttributeSet();
         StyleConstants.setFontSize(estilo, tamano);
-        aplicarEstilo(estilo);
+        aplicarCaracter(estilo);
     }
 
     public void cambiarColor(Color color) {
         SimpleAttributeSet estilo = new SimpleAttributeSet();
         StyleConstants.setForeground(estilo, color);
-        aplicarEstilo(estilo);
+        aplicarCaracter(estilo);
     }
 
-    // MEJORA: MÉTODOS TIPO "TOGGLE" (Prender/Apagar)
-    public void alternarNegrita() {
-        StyledDocument doc = areaTexto.getStyledDocument();
-        Element elemento = doc.getCharacterElement(areaTexto.getSelectionStart());
-        AttributeSet atributos = elemento.getAttributes();
-
-        // Si ya es negrita, lo quita; si no, lo pone
-        boolean esNegrita = StyleConstants.isBold(atributos);
+    public void negrita(boolean activo) {
         SimpleAttributeSet estilo = new SimpleAttributeSet();
-        StyleConstants.setBold(estilo, !esNegrita);
-        
-        aplicarEstilo(estilo);
+        StyleConstants.setBold(estilo, activo);
+        aplicarCaracter(estilo);
     }
 
-    public void alternarCursiva() {
-        StyledDocument doc = areaTexto.getStyledDocument();
-        Element elemento = doc.getCharacterElement(areaTexto.getSelectionStart());
-        AttributeSet atributos = elemento.getAttributes();
-
-        boolean esCursiva = StyleConstants.isItalic(atributos);
+    public void cursiva(boolean activo) {
         SimpleAttributeSet estilo = new SimpleAttributeSet();
-        StyleConstants.setItalic(estilo, !esCursiva);
-        
-        aplicarEstilo(estilo);
+        StyleConstants.setItalic(estilo, activo);
+        aplicarCaracter(estilo);
     }
 
-    public void alternarSubrayado() {
-        StyledDocument doc = areaTexto.getStyledDocument();
-        Element elemento = doc.getCharacterElement(areaTexto.getSelectionStart());
-        AttributeSet atributos = elemento.getAttributes();
-
-        boolean esSubrayado = StyleConstants.isUnderline(atributos);
+    public void subrayado(boolean activo) {
         SimpleAttributeSet estilo = new SimpleAttributeSet();
-        StyleConstants.setUnderline(estilo, !esSubrayado);
-        
-        aplicarEstilo(estilo);
+        StyleConstants.setUnderline(estilo, activo);
+        aplicarCaracter(estilo);
     }
 }
