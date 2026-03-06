@@ -16,5 +16,5 @@ public class Lab6_PrograII {
     public static void main(String[] args) {
         // TODO code application logic here
     }
-    
-}
+    //https://chatgpt.com/share/69aaed27-908c-800d-b7d5-2f16b74cfee3
+
