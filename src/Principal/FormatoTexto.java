@@ -3,14 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package Principal;
-
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
-/**
- *
- * @author jeremy
- */
 
 public class FormatoTexto {
 
@@ -20,67 +15,72 @@ public class FormatoTexto {
         this.areaTexto = areaTexto;
     }
 
+    // MÉTODO BASE: Ahora es más inteligente para combinar estilos
     private void aplicarEstilo(SimpleAttributeSet estilo) {
-
         int inicio = areaTexto.getSelectionStart();
         int fin = areaTexto.getSelectionEnd();
 
-        StyledDocument doc = areaTexto.getStyledDocument();
+        if (inicio == fin) return; // Pro Tip: No hace nada si no hay selección
 
+        StyledDocument doc = areaTexto.getStyledDocument();
+        // El 'false' es clave para que NO borre los estilos anteriores
         doc.setCharacterAttributes(inicio, fin - inicio, estilo, false);
     }
 
-    // Cambiar fuente
+    // FUENTE Y TAMAÑO
     public void cambiarFuente(String fuente) {
-
         SimpleAttributeSet estilo = new SimpleAttributeSet();
         StyleConstants.setFontFamily(estilo, fuente);
-
         aplicarEstilo(estilo);
     }
 
-    // Cambiar tamaño
     public void cambiarTamano(int tamano) {
-
         SimpleAttributeSet estilo = new SimpleAttributeSet();
         StyleConstants.setFontSize(estilo, tamano);
-
         aplicarEstilo(estilo);
     }
 
-    // Cambiar color
     public void cambiarColor(Color color) {
-
         SimpleAttributeSet estilo = new SimpleAttributeSet();
         StyleConstants.setForeground(estilo, color);
-
         aplicarEstilo(estilo);
     }
 
-    // Negrita
-    public void negrita() {
+    // MEJORA: MÉTODOS TIPO "TOGGLE" (Prender/Apagar)
+    public void alternarNegrita() {
+        StyledDocument doc = areaTexto.getStyledDocument();
+        Element elemento = doc.getCharacterElement(areaTexto.getSelectionStart());
+        AttributeSet atributos = elemento.getAttributes();
 
+        // Si ya es negrita, lo quita; si no, lo pone
+        boolean esNegrita = StyleConstants.isBold(atributos);
         SimpleAttributeSet estilo = new SimpleAttributeSet();
-        StyleConstants.setBold(estilo, true);
-
+        StyleConstants.setBold(estilo, !esNegrita);
+        
         aplicarEstilo(estilo);
     }
 
-    // Cursiva
-    public void cursiva() {
+    public void alternarCursiva() {
+        StyledDocument doc = areaTexto.getStyledDocument();
+        Element elemento = doc.getCharacterElement(areaTexto.getSelectionStart());
+        AttributeSet atributos = elemento.getAttributes();
 
+        boolean esCursiva = StyleConstants.isItalic(atributos);
         SimpleAttributeSet estilo = new SimpleAttributeSet();
-        StyleConstants.setItalic(estilo, true);
-
+        StyleConstants.setItalic(estilo, !esCursiva);
+        
         aplicarEstilo(estilo);
     }
 
-    // Subrayado
-    public void subrayado() {
+    public void alternarSubrayado() {
+        StyledDocument doc = areaTexto.getStyledDocument();
+        Element elemento = doc.getCharacterElement(areaTexto.getSelectionStart());
+        AttributeSet atributos = elemento.getAttributes();
 
+        boolean esSubrayado = StyleConstants.isUnderline(atributos);
         SimpleAttributeSet estilo = new SimpleAttributeSet();
-        StyleConstants.setUnderline(estilo, true);
-
+        StyleConstants.setUnderline(estilo, !esSubrayado);
+        
         aplicarEstilo(estilo);
     }
 }
